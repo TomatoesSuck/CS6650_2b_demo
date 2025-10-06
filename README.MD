@@ -46,8 +46,84 @@ Send some requests:
 ```
 curl http://<PUBLIC-IP-ADDRESS>:8080/v1/products/12345
 ```
+Response:
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Date: Sun, 06 Oct 2025 18:22:30 GMT
+Content-Length: 130
+{
+  "product_id": 12345,
+  "sku": "ABC-123-XYZ",
+  "manufacturer": "Acme Corporation",
+  "category_id": 456,
+  "weight": 1250,
+  "some_other_id": 789
+}
+
+```
+curl http://<PUBLIC-IP-ADDRESS>:8080/v1/products/99999
+```
+Response:
+HTTP/1.1 404 Not Found
+Content-Type: application/json; charset=utf-8
+Date: Sun, 06 Oct 2025 18:22:50 GMT
+Content-Length: 110
+{
+  "error": "NOT_FOUND",
+  "message": "Product not found",
+  "details": "Product ID must be a positive integer"
+}
+
+
+```
+curl -i -X POST http://localhost:8080/v1/products/12345/details \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_id": 12345,
+    "sku": "ABC-123-XYZ",
+    "manufacturer": "Apple Inc.",
+    "category_id": 456,
+    "weight": 1250,
+    "some_other_id": 789
+  }'
+```
+Response:
+HTTP/1.1 204 No Content
+Date: Sun, 06 Oct 2025 19:25:31 GMT
+Content-Length: 0
+
+
+```
+curl -i -X POST http://localhost:8080/v1/products/12345/details \
+  -H "Content-Type: application/json" \
+  -d '{
+    "product_id": 12345,
+    "sku": "ABC-123-XYZ",
+    "manufacturer": "",
+    "category_id": 456,
+    "weight": 1250,
+    "some_other_id": 789
+  }'
+```
+Response:
+{
+  "error": "INVALID_INPUT",
+  "message": "Provided input data is invalid"
+}
 
 ## Clean Up
 ```
 terraform destroy -auto-approve
 ```
+
+simple-estore/
+├── src/                # Go Code & Dockerfile
+│   ├── main.go
+│   ├── api/...
+│   └── Dockerfile
+├── terraform/          # Infrastracture（ECR/ECS/VPC/日志）
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── modules/
+│   └── outputs.tf
+└── README.md
