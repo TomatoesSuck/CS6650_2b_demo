@@ -18,12 +18,12 @@ PRODUCT_POST_500 = 99999# in POST handler: panic when id==99999 → POST 500
 
 # ----- Bodies must match your struct types (int32 for ids/weight, strings for sku/manufacturer) -----
 VALID_BODY = {
+    # missing productId is fine
     "sku": "DEF-456-QWE",
     "manufacturer": "Beta Corp",
     "category_id": 456,      # int
     "weight": 800,           # int
     "some_other_id": 22      # int
-    # product_id 可不传；若传必须等于 path
 }
 
 INVALID_BODY_MISSING = {
