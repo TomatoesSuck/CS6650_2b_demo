@@ -44,7 +44,7 @@ aws ec2 describe-network-interfaces \
 
 Send some requests:
 ```
-curl http://<PUBLIC-IP-ADDRESS>:8080/albums
+curl http://<PUBLIC-IP-ADDRESS>:8080/v1/products/12345
 ```
 
 ## Clean Up
