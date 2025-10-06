@@ -32,6 +32,8 @@ func init() {
 		Weight:       1250,
 		SomeOtherId:  789,
 	})
+
+	productStore.Store(50000, "this is not a Product")
 }
 
 func writeErr(c *gin.Context, status int) {
@@ -75,26 +77,42 @@ func (api *ProductsAPI) GetProduct(c *gin.Context) {
 // Add product details
 func (api *ProductsAPI) AddProductDetails(c *gin.Context) {
 	idStr := c.Param("productId")
+	// Convert the productId from string to integer
 	id, err := strconv.Atoi(idStr)
+
+	// If the conversion fails or productId < 1,
+	// it means the client sent an invalid path parameter.
+	// For POST requests, this should return a 400 Bad Request response.
 	if err != nil || id < 1 {
-		// For POST, return 400 as per spec
 		writeErr(c, http.StatusBadRequest)
 		return
 	}
 
+	// simulate encounter panic
+	if id == 99999 {
+		panic("simulate internal error")
+	}
+
+	// Try to bind (parse) the incoming JSON payload into a Product struct.
+	// If the body is not valid JSON, or the field types don't match the struct definition,
+	// return a 400 Bad Request response.
 	var body Product
 	if err := c.ShouldBindJSON(&body); err != nil {
 		writeErr(c, http.StatusBadRequest)
 		return
 	}
 
-	// Business validation (minimal required fields according to your schema)
+	// Business validation (minimal required fields according to the schema)
 	if body.Sku == "" || body.Manufacturer == "" || body.CategoryId < 1 || body.Weight < 0 || body.SomeOtherId < 1 {
 		writeErr(c, http.StatusBadRequest)
 		return
 	}
 
-	// If product_id is provided in request body, it must match the path parameter
+	// If product_id is provided in the JSON body, it must match the productId from the URL path.
+	// This ensures data consistency — the client cannot send a mismatched ID.
+	// Example:
+	//   POST /v1/products/12345/details
+	//   Body: { "product_id": 99999, ... }
 	if body.ProductId != 0 && int(body.ProductId) != id {
 		writeErr(c, http.StatusBadRequest)
 		return
@@ -114,6 +132,7 @@ func (api *ProductsAPI) AddProductDetails(c *gin.Context) {
 	}()
 
 	// Regardless of whether product_id is provided in the request body, use the productId from the path parameter
+	// this is in case client doesn't include id in their request body
 	body.ProductId = int32(id)
 	productStore.Store(id, body)
 
