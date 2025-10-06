@@ -115,15 +115,3 @@ Response:
 ```
 terraform destroy -auto-approve
 ```
-
-simple-estore/
-├── src/                # Go Code & Dockerfile
-│   ├── main.go
-│   ├── api/...
-│   └── Dockerfile
-├── terraform/          # Infrastracture（ECR/ECS/VPC/日志）
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── modules/
-│   └── outputs.tf
-└── README.md
