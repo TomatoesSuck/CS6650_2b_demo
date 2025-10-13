@@ -20,6 +20,8 @@ import (
 )
 
 func main() {
+	sw.InitSearchData(100000)
+
 	routes := sw.ApiHandleFunctions{}
 
 	log.Printf("Server started")
