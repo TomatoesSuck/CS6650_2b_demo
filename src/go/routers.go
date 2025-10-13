@@ -71,10 +71,17 @@ type ApiHandleFunctions struct {
 	ShoppingCartAPI ShoppingCartAPI
 	// Routes for the WarehouseAPI part of the API
 	WarehouseAPI WarehouseAPI
+	HealthAPI    HealthAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 	return []Route{
+		{
+			"HealthCheck",
+			http.MethodGet,
+			"/health",
+			handleFunctions.HealthAPI.HealthCheck,
+		},
 		{
 			"ProcessPayment",
 			http.MethodPost,
