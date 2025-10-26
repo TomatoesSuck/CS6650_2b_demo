@@ -22,7 +22,8 @@ import (
 func main() {
 	sw.InitSearchData(100000)
 
-	routes := sw.ApiHandleFunctions{}
+	routes := sw.ApiHandleFunctions{
+		OrdersAsyncAPI: sw.NewOrdersAsyncAPI()}
 
 	log.Printf("Server started")
 

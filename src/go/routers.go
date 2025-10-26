@@ -70,8 +70,10 @@ type ApiHandleFunctions struct {
 	// Routes for the ShoppingCartAPI part of the API
 	ShoppingCartAPI ShoppingCartAPI
 	// Routes for the WarehouseAPI part of the API
-	WarehouseAPI WarehouseAPI
-	HealthAPI    HealthAPI
+	WarehouseAPI   WarehouseAPI
+	HealthAPI      HealthAPI
+	OrdersAPI      OrdersAPI
+	OrdersAsyncAPI *OrdersAsyncAPI
 }
 
 func getRoutes(handleFunctions ApiHandleFunctions) []Route {
@@ -99,6 +101,18 @@ func getRoutes(handleFunctions ApiHandleFunctions) []Route {
 			http.MethodGet,
 			"/v1/products/search",
 			handleFunctions.ProductsAPI.SearchProducts,
+		},
+		{
+			Name:        "OrdersSync",
+			Method:      http.MethodPost,
+			Pattern:     "/v1/orders/sync",
+			HandlerFunc: handleFunctions.OrdersAPI.OrdersSync,
+		},
+		{
+			Name:        "OrdersAsync",
+			Method:      http.MethodPost,
+			Pattern:     "/v1/orders/async",
+			HandlerFunc: handleFunctions.OrdersAsyncAPI.OrdersAsync,
 		},
 		{
 			"GetProduct",
