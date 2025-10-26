@@ -161,14 +161,14 @@ func (api *ProductsAPI) SearchProducts(c *gin.Context) {
 		return
 	}
 
-	// --- 2) Define a fixed-size scan window and compute scan base ---
+	// Define a fixed-size scan window and compute scan base ---
 	const window = 100                           // fixed compute cost per request
 	checked := 0                                 // how many items we examined this request
 	n := len(idIndex)                            // total dataset size
 	base := int(scanCursor.Add(window) - window) // moving start offset (round-robin)
 	results := make([]SearchProduct, 0, limit)   // pre-cap results (<= limit)
 
-	// --- 3) Scan exactly `window` items in a ring and collect up to `limit` matches ---
+	// Scan exactly `window` items in a ring and collect up to `limit` matches ---
 	for i := 0; i < window && checked < window; i++ {
 		idx := (base + i) % n // ring index
 		id := idIndex[idx]    // fetch product ID from ordered index
@@ -192,7 +192,7 @@ func (api *ProductsAPI) SearchProducts(c *gin.Context) {
 	// Update global cumulative metric (atomic & contention-free).
 	totalChecked.Add(uint64(checked))
 
-	// --- 4) Respond with results + observability fields ---
+	// Respond with results + observability fields ---
 	resp := gin.H{
 		"hits":          results,                          // matched products (<= limit)
 		"count":         len(results),                     // number of matches returned
